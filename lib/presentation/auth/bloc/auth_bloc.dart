@@ -16,7 +16,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Listen to auth state changes
     authRepository.authStateChanges.listen((authState) {
-      if (authState.session != null) {
+      final session = authState.session;
+
+      if (session != null) {
         add(AuthCheckRequested());
       } else {
         emit(state.copyWith(status: AuthStatus.unauthenticated, user: null));
@@ -32,6 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final currentUser = authRepository.currentUser;
       if (currentUser != null) {
         final user = await authRepository.getUserData(currentUser.id);
+
         emit(state.copyWith(status: AuthStatus.authenticated, user: user));
       } else {
         emit(state.copyWith(status: AuthStatus.unauthenticated));

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nutralis_flutter/presentation/product/result/product_result_screen.dart';
+import 'package:nutralis_flutter/presentation/product/scanner/scanner_screen.dart';
 import '../presentation/auth/login_screen.dart';
 import '../presentation/auth/register_screen.dart';
 import '../presentation/home/home_screen.dart';
@@ -14,7 +16,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String home = '/home';
   static const String scanner = '/scanner';
-  static const String productDetails = '/product-details';
+  static const String productResult = '/product-result';
   static const String search = '/search';
   static const String compare = '/compare';
   static const String history = '/history';
@@ -28,13 +30,13 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      // case scanner:
-      //   return MaterialPageRoute(builder: (_) => const ScannerScreen());
-      // case productDetails:
-      //   final barcode = settings.arguments as String;
-      //   return MaterialPageRoute(
-      //     builder: (_) => ProductDetailsScreen(barcode: barcode),
-      //   );
+      case scanner:
+        return MaterialPageRoute(builder: (_) => const ScannerScreen());
+      case productResult:
+        final barcode = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ProductResultScreen(barcode: barcode),
+        );
       // case search:
       //   return MaterialPageRoute(builder: (_) => const SearchScreen());
       // case compare:

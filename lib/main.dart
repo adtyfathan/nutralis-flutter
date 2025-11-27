@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutralis_flutter/presentation/home/bloc/home_bloc.dart';
+import 'package:nutralis_flutter/presentation/product/bloc/product_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
@@ -31,8 +33,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<AuthBloc>()..add(AuthCheckRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => getIt<AuthBloc>()..add(AuthCheckRequested()),
+        ),
+        BlocProvider<HomeBloc>(
+          create: (context) => getIt<HomeBloc>(),
+        ),
+        BlocProvider<ProductBloc>(
+          create: (context) => getIt<ProductBloc>(),
+        )
+      ],
       child: MaterialApp(
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,

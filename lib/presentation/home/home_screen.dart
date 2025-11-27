@@ -8,6 +8,7 @@ import '../auth/bloc/auth_state.dart';
 import 'bloc/home_bloc.dart';
 import 'bloc/home_event.dart';
 import 'bloc/home_state.dart';
+import '../product/scanner/scanner_screen.dart';
 // import '../scanner/scanner_screen.dart';
 // import '../product/search_screen.dart';
 // import '../compare/compare_screen.dart';
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const _HomeContent(),
-    // const ScannerScreen(),
+    const ScannerScreen(),
     // const HistoryScreen(),
     // const ProfileScreen(),
   ];
