@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:nutralis_flutter/config/routes.dart';
 import '../../../data/models/product_model.dart';
 import '../../../core/theme/app_theme.dart';
-// import '../../product/product_details_screen.dart';
 
 class ProductCard extends StatelessWidget {
-  final ProductModel product;
+  final ProductResponse product;
 
   const ProductCard({super.key, required this.product});
 
@@ -13,12 +13,11 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => ProductDetailsScreen(barcode: product.code),
-        //   ),
-        // );
+        Navigator.pushNamed(
+          context,
+          AppRoutes.productResult,
+          arguments: product.code,
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -34,30 +33,31 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
                       color: Colors.white,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(
+                      borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
-                      child: product.imageUrl != null
+                      child: product.product.imageUrl != null
                           ? CachedNetworkImage(
-                              imageUrl: product.imageUrl!,
+                              imageUrl: product.product.imageUrl!,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Center(child: CircularProgressIndicator()),
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                               errorWidget: (context, url, error) =>
-                                  Icon(Icons.fastfood, size: 50),
+                                  const Icon(Icons.fastfood, size: 50),
                             )
-                          : Icon(Icons.fastfood, size: 50),
+                          : const Icon(Icons.fastfood, size: 50),
                     ),
                   ),
                   // Nutri-Score Badge
-                  if (product.nutritionGrade != null)
+                  if (product.product.nutriscoreGrade != null)
                     Positioned(
                       top: 8,
                       right: 8,
@@ -66,14 +66,14 @@ class ProductCard extends StatelessWidget {
                         height: 36,
                         decoration: BoxDecoration(
                           color: AppTheme.getNutriScoreColor(
-                            product.nutritionGrade,
+                            product.product.nutriscoreGrade,
                           ),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
-                            product.nutritionGrade!.toUpperCase(),
-                            style: TextStyle(
+                            product.product.nutriscoreGrade!.toUpperCase(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -89,8 +89,11 @@ class ProductCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                product.productName ?? 'Unknown Product',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                product.product.productName ?? 'Unknown Product',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

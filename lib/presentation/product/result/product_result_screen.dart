@@ -39,7 +39,38 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
 
           if (state.errorMessage != null) {
             return Center(
-              child: Text(state.errorMessage!),
+              child: Card(
+                margin: const EdgeInsets.all(24),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Error",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        state.errorMessage!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF666666),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           }
 
@@ -47,19 +78,32 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
             return const Center(child: Text("Product not found"));
           }
 
-          final p = state.product!;
+          final productResponse = state.product!;
+          final product = productResponse.product;
 
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              _buildImageCard(p.imageUrl, p.nutritionGrade),
+              _buildImageCard(product.imageUrl, product.nutriscoreGrade),
               const SizedBox(height: 16),
-              _buildInfoCard(p),
-              if (p.categories != null && p.categories!.isNotEmpty)
-                _buildCategoriesCard(p.categories!),
-              if (p.nutriments != null && p.nutriments!.isNotEmpty)
-                _buildNutrimentsCard(p.nutriments!),
-              const SizedBox(height: 24),
+              _buildInfoCard(productResponse.code, product),
+              const SizedBox(height: 16),
+              if (product.categoriesTags != null &&
+                  product.categoriesTags!.isNotEmpty)
+                _buildCategoriesCard(product.categoriesTags!),
+              if (product.nutrientLevels != null &&
+                  _hasAnyNutrientLevel(product.nutrientLevels!))
+                _buildNutrientLevelsCard(product.nutrientLevels!),
+              if (product.nutriments != null &&
+                  _hasAnyNutriment(product.nutriments!))
+                _buildNutrimentsCard(product.nutriments!),
+              if (product.ingredients != null &&
+                  product.ingredients!.isNotEmpty)
+                _buildIngredientsCard(product.ingredients!),
+              if (product.allergensHierarchy != null &&
+                  product.allergensHierarchy!.isNotEmpty)
+                _buildAllergensCard(product.allergensHierarchy!),
+              const SizedBox(height: 16),
             ],
           );
         },
@@ -69,13 +113,15 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
 
   // IMAGE + GRADE
   Widget _buildImageCard(String? url, String? grade) {
-    final gradeColor = {
-      "a": const Color(0xFF4CAF50),
-      "b": const Color(0xFF8BC34A),
-      "c": const Color(0xFFFFC107),
-      "d": const Color(0xFFFF9800),
-      "e": const Color(0xFFF44336),
-    }[grade?.toLowerCase()] ?? Colors.grey;
+    final gradeColor =
+        {
+          "a": const Color(0xFF4CAF50),
+          "b": const Color(0xFF8BC34A),
+          "c": const Color(0xFFFFC107),
+          "d": const Color(0xFFFF9800),
+          "e": const Color(0xFFF44336),
+        }[grade?.toLowerCase()] ??
+        Colors.grey;
 
     return Card(
       elevation: 4,
@@ -112,6 +158,7 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -122,15 +169,21 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
   }
 
   // BASIC INFORMATION
-  Widget _buildInfoCard(product) {
+  Widget _buildInfoCard(String barcode, product) {
     return _buildCard(
       "Product Information",
       Column(
         children: [
-          _infoRow("Barcode", product.code),
-          _infoRow("Name", product.productName),
-          _infoRow("Nutrition Grade", product.nutritionGrade?.toUpperCase()),
-          _infoRow("Nutrition Score", "${product.nutritionScore ?? "-"} / 100"),
+          _infoRow("Barcode", barcode),
+          _infoRow("Product Name", product.productName),
+          _infoRow(
+            "Nutrition Score",
+            product.nutriscoreScore != null
+                ? "${product.nutriscoreScore}/100"
+                : null,
+          ),
+          _infoRow("Packaging", product.packaging),
+          _infoRow("Manufacturer", product.countries),
         ],
       ),
     );
@@ -139,12 +192,11 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
   // CATEGORIES
   Widget _buildCategoriesCard(List<String> categories) {
     return _buildCard(
-      "Categories",
+      "Product Categories",
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: categories.map((c) {
-          final formatted =
-              c.contains(":") ? c.split(":").last : c;
+          final formatted = c.contains(":") ? c.split(":").last : c;
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -154,12 +206,20 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
                   height: 6,
                   width: 6,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen,
+                    color: const Color(0xFF81C784),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(formatted, style: const TextStyle(fontSize: 14)),
+                Expanded(
+                  child: Text(
+                    formatted,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF2E2E2E),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -168,15 +228,142 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
     );
   }
 
-  // NUTRIMENT MAP
-  Widget _buildNutrimentsCard(Map<String, dynamic> nutriments) {
+  // NUTRIENT LEVELS
+  Widget _buildNutrientLevelsCard(nutrientLevels) {
     return _buildCard(
-      "Nutriments",
+      "Nutrient Levels",
       Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: nutriments.entries.map((entry) {
-          return _infoRow(entry.key, entry.value.toString());
+        children: [
+          if (nutrientLevels.fat != null)
+            _nutrientLevelRow("Fat", nutrientLevels.fat),
+          if (nutrientLevels.salt != null)
+            _nutrientLevelRow("Salt", nutrientLevels.salt),
+          if (nutrientLevels.saturatedFat != null)
+            _nutrientLevelRow("Saturated Fat", nutrientLevels.saturatedFat),
+          if (nutrientLevels.sugars != null)
+            _nutrientLevelRow("Sugars", nutrientLevels.sugars),
+        ],
+      ),
+    );
+  }
+
+  // NUTRIMENTS
+  Widget _buildNutrimentsCard(nutriments) {
+    return _buildCard(
+      "Nutrients",
+      Column(
+        children: [
+          if (nutriments.carbohydrates != null)
+            _infoRow(
+              "Carbohydrates",
+              "${nutriments.carbohydrates} ${nutriments.carbohydratesUnit ?? ''}",
+            ),
+          if (nutriments.energy != null)
+            _infoRow(
+              "Energy",
+              "${nutriments.energy} ${nutriments.energyUnit ?? ''}",
+            ),
+          if (nutriments.fat != null)
+            _infoRow("Fat", "${nutriments.fat} ${nutriments.fatUnit ?? ''}"),
+          if (nutriments.proteins != null)
+            _infoRow(
+              "Protein",
+              "${nutriments.proteins} ${nutriments.proteinsUnit ?? ''}",
+            ),
+          if (nutriments.salt != null)
+            _infoRow("Salt", "${nutriments.salt} ${nutriments.saltUnit ?? ''}"),
+          if (nutriments.saturatedFat != null)
+            _infoRow(
+              "Saturated Fat",
+              "${nutriments.saturatedFat} ${nutriments.saturatedFatUnit ?? ''}",
+            ),
+          if (nutriments.sodium != null)
+            _infoRow(
+              "Sodium",
+              "${nutriments.sodium} ${nutriments.sodiumUnit ?? ''}",
+            ),
+          if (nutriments.sugars != null)
+            _infoRow(
+              "Sugars",
+              "${nutriments.sugars} ${nutriments.sugarsUnit ?? ''}",
+            ),
+        ],
+      ),
+    );
+  }
+
+  // INGREDIENTS
+  Widget _buildIngredientsCard(List ingredients) {
+    return _buildCard(
+      "Ingredients",
+      Column(
+        children: ingredients.map((ingredient) {
+          return _infoRow(
+            ingredient.text ?? "Unknown",
+            ingredient.percentEstimate != null
+                ? "${ingredient.percentEstimate}%"
+                : null,
+          );
         }).toList(),
+      ),
+    );
+  }
+
+  // ALLERGENS
+  Widget _buildAllergensCard(List<String> allergens) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFEBA100), width: 2),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Allergen Warning",
+              style: TextStyle(
+                color: Color(0xFFEBA100),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...allergens.map((allergen) {
+              final formatted = allergen.contains(":")
+                  ? allergen.split(":").last
+                  : allergen;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 6,
+                      width: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEBA100),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        formatted,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF2E2E2E),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }
@@ -208,9 +395,48 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
   }
 
   Widget _infoRow(String label, String? value) {
+    final displayValue = value != null && value.contains(":") ? value.split(":").last : value;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF666666),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              displayValue?.isNotEmpty == true ? displayValue! : "Unknown",
+              style: const TextStyle(fontSize: 14, color: Color(0xFF2E2E2E)),
+              textAlign: TextAlign.start,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _nutrientLevelRow(String label, String? value) {
+    final nutrientLevelColor =
+        {
+          "low": const Color(0xFF1df705),
+          "moderate": const Color(0xFFebf705),
+          "high": const Color(0xFFf73105),
+        }[value?.toLowerCase()] ??
+        const Color(0xFF212121);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Text(
@@ -225,11 +451,34 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
           Expanded(
             child: Text(
               value?.isNotEmpty == true ? value! : "Unknown",
-              style: const TextStyle(fontSize: 14, color: Color(0xFF2E2E2E)),
+              style: TextStyle(
+                fontSize: 14,
+                color: nutrientLevelColor,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.start,
             ),
           ),
         ],
       ),
     );
+  }
+
+  bool _hasAnyNutrientLevel(nutrientLevels) {
+    return nutrientLevels.fat != null ||
+        nutrientLevels.salt != null ||
+        nutrientLevels.saturatedFat != null ||
+        nutrientLevels.sugars != null;
+  }
+
+  bool _hasAnyNutriment(nutriments) {
+    return nutriments.carbohydrates != null ||
+        nutriments.energy != null ||
+        nutriments.fat != null ||
+        nutriments.proteins != null ||
+        nutriments.salt != null ||
+        nutriments.saturatedFat != null ||
+        nutriments.sodium != null ||
+        nutriments.sugars != null;
   }
 }

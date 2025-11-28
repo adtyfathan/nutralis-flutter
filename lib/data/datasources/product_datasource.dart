@@ -7,14 +7,14 @@ class ProductDataSource {
 
   ProductDataSource(this.dio);
 
-  Future<ProductModel> getProductByBarcode(String barcode) async {
+  Future<ProductResponse> getProductByBarcode(String barcode) async {
     try {
       final response = await dio.get(
         '${AppConstants.foodFactsBaseUrl}/product/$barcode',
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
-        return ProductModel.fromOpenFoodFacts(response.data);
+        return ProductResponse.fromJson(response.data);
       } else {
         throw Exception('Product not found');
       }
@@ -23,7 +23,7 @@ class ProductDataSource {
     }
   }
 
-  Future<List<ProductModel>> searchProducts({
+  Future<List<ProductResponse>> searchProducts({
     required String query,
     int page = 1,
   }) async {
@@ -41,7 +41,10 @@ class ProductDataSource {
 
       if (response.statusCode == 200) {
         final products = (response.data['products'] as List)
-            .map((json) => ProductModel.fromSearch(json))
+            .map((json) =>  ProductResponse(
+                code: json['code']?.toString() ?? '',
+                product: Product.fromJson(json),
+            ))
             .toList();
         return products;
       } else {
@@ -52,7 +55,7 @@ class ProductDataSource {
     }
   }
 
-  Future<List<ProductModel>> getProductsByCategory({
+  Future<List<ProductResponse>> getProductsByCategory({
     required String category,
     int page = 1,
   }) async {
@@ -70,7 +73,10 @@ class ProductDataSource {
 
       if (response.statusCode == 200) {
         final products = (response.data['products'] as List)
-            .map((json) => ProductModel.fromSearch(json))
+            .map((json) => ProductResponse(
+                code: json['code']?.toString() ?? '',
+                product: Product.fromJson(json),
+              ))
             .toList();
         return products;
       } else {

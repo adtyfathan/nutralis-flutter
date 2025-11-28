@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import '../../../data/models/product_model.dart';
 
 class ProductState extends Equatable {
-  final ProductModel? product;
-  final List<ProductModel> searchResults;
+  final ProductResponse? product;
+  final List<ProductResponse> searchResults;
   final bool isLoading;
   final String? errorMessage;
 
@@ -15,8 +15,8 @@ class ProductState extends Equatable {
   });
 
   ProductState copyWith({
-    ProductModel? product,
-    List<ProductModel>? searchResults,
+    ProductResponse? product,
+    List<ProductResponse>? searchResults,
     bool? isLoading,
     String? errorMessage,
   }) {

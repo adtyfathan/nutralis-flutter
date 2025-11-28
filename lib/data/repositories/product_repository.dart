@@ -6,18 +6,18 @@ class ProductRepository {
 
   ProductRepository(this.dataSource);
 
-  Future<ProductModel> getProductByBarcode(String barcode) async {
+  Future<ProductResponse> getProductByBarcode(String barcode) async {
     return await dataSource.getProductByBarcode(barcode);
   }
 
-  Future<List<ProductModel>> searchProducts({
+  Future<List<ProductResponse>> searchProducts({
     required String query,
     int page = 1,
   }) async {
     return await dataSource.searchProducts(query: query, page: page);
   }
 
-  Future<List<ProductModel>> getProductsByCategory({
+  Future<List<ProductResponse>> getProductsByCategory({
     required String category,
     int page = 1,
   }) async {

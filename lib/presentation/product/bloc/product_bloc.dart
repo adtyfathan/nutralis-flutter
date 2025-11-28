@@ -66,14 +66,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (state.product == null) return;
 
     try {
+      final product = state.product!.product;
+
       final scannedProduct = ScannedProductModel(
         userId: event.userId,
-        code: event.barcode,
-        productName: state.product!.productName,
-        imageUrl: state.product!.imageUrl,
-        nutriscoreGrade: state.product!.nutritionGrade,
-        nutriscoreScore: state.product!.nutritionScore,
-        productType: state.product!.categories?.first,
+        code: state.product!.code,
+        productName: product.productName,
+        imageUrl: product.imageUrl,
+        nutriscoreGrade: product.nutriscoreGrade,
+        nutriscoreScore: product.nutriscoreScore,
+        productType: product.productType ?? product.categoriesTags?.first,
         scannedAt: DateTime.now(),
       );
 
