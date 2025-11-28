@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutralis_flutter/presentation/home/bloc/home_bloc.dart';
 import 'package:nutralis_flutter/presentation/product/bloc/product_bloc.dart';
+import 'package:nutralis_flutter/presentation/scanned_product/bloc/scanned_product_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
@@ -43,6 +44,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProductBloc>(
           create: (context) => getIt<ProductBloc>(),
+        ),
+        BlocProvider<ScannedProductBloc>(
+          create: (context) => getIt<ScannedProductBloc>(),
         )
       ],
       child: MaterialApp(

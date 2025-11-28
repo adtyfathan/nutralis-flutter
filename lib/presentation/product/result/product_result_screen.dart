@@ -24,7 +24,7 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         backgroundColor: AppTheme.primaryGreen,
         title: const Text("Product Details"),
@@ -115,11 +115,11 @@ class _ProductResultScreenState extends State<ProductResultScreen> {
   Widget _buildImageCard(String? url, String? grade) {
     final gradeColor =
         {
-          "a": const Color(0xFF4CAF50),
-          "b": const Color(0xFF8BC34A),
-          "c": const Color(0xFFFFC107),
-          "d": const Color(0xFFFF9800),
-          "e": const Color(0xFFF44336),
+          "a": AppTheme.gradeA,
+          "b": AppTheme.gradeB,
+          "c": AppTheme.gradeC,
+          "d": AppTheme.gradeD,
+          "e": AppTheme.gradeE,
         }[grade?.toLowerCase()] ??
         Colors.grey;
 

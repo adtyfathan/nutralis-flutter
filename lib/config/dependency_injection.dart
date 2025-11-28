@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:nutralis_flutter/presentation/scanned_product/bloc/scanned_product_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/datasources/auth_datasource.dart';
 import '../data/datasources/product_datasource.dart';
@@ -51,6 +52,11 @@ Future<void> setupDependencies() async {
     () => ProductBloc(
       productRepository: getIt<ProductRepository>(),
       scannedProductRepository: getIt<ScannedProductRepository>(),
+    ),
+  );
+  getIt.registerFactory<ScannedProductBloc>(
+    () => ScannedProductBloc(
+      repository: getIt<ScannedProductRepository>(),
     ),
   );
 }

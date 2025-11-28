@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutralis_flutter/presentation/scanned_product/scanned_product_screen.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/dependency_injection.dart';
@@ -9,11 +10,6 @@ import 'bloc/home_bloc.dart';
 import 'bloc/home_event.dart';
 import 'bloc/home_state.dart';
 import '../product/scanner/scanner_screen.dart';
-// import '../scanner/scanner_screen.dart';
-// import '../product/search_screen.dart';
-// import '../compare/compare_screen.dart';
-// import '../history/history_screen.dart';
-// import '../profile/profile_screen.dart';
 import 'widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,50 +22,49 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const _HomeContent(),
-    const ScannerScreen(),
-    // const HistoryScreen(),
-    // const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: AppTheme.primaryGreen,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final List<Widget> screens = [
+          const _HomeContent(),
+          const ScannerScreen(),
+          ScannedProductScreen(userId: authState.user?.uid ?? ''),
+          // const ProfileScreen(),
+        ];
+
+        return Scaffold(
+          body: screens[_currentIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            selectedItemColor: AppTheme.primaryGreen,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.qr_code_scanner_outlined),
+                activeIcon: Icon(Icons.qr_code_scanner),
+                label: 'Scan',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history_outlined),
+                activeIcon: Icon(Icons.history),
+                label: 'History',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code_scanner_outlined),
-            activeIcon: Icon(Icons.qr_code_scanner),
-            label: 'Scan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history_outlined),
-            activeIcon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outlined),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -100,7 +95,7 @@ class _HomeContent extends StatelessWidget {
                             children: [
                               Text(
                                 'Welcome to Nutralis, ${authState.user?.username ?? 'User'}!',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -112,7 +107,7 @@ class _HomeContent extends StatelessWidget {
                               // Quick Menu
                               _buildQuickMenu(context),
                               const SizedBox(height: 24),
-                              Text(
+                              const Text(
                                 'Explore by Category',
                                 style: TextStyle(
                                   fontSize: 20,
@@ -156,7 +151,7 @@ class _HomeContent extends StatelessWidget {
                                         ? FontWeight.w600
                                         : FontWeight.normal,
                                   ),
-                                  side: BorderSide(
+                                  side: const BorderSide(
                                     color: AppTheme.primaryGreen,
                                     width: 1,
                                   ),
@@ -170,18 +165,18 @@ class _HomeContent extends StatelessWidget {
                       SliverPadding(
                         padding: const EdgeInsets.all(24.0),
                         sliver: state.isLoading
-                            ? SliverToBoxAdapter(
+                            ? const SliverToBoxAdapter(
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               )
                             : state.products.isEmpty
-                            ? SliverToBoxAdapter(
+                            ? const SliverToBoxAdapter(
                                 child: Center(child: Text('No products found')),
                               )
                             : SliverGrid(
                                 gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
                                       childAspectRatio: 0.75,
                                       crossAxisSpacing: 16,
@@ -213,7 +208,7 @@ class _HomeContent extends StatelessWidget {
       width: double.infinity,
       height: 180,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppTheme.primaryGreen, AppTheme.lightGreen],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -225,7 +220,7 @@ class _HomeContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'Your smart companion',
             style: TextStyle(
               fontSize: 24,
@@ -298,7 +293,10 @@ class _HomeContent extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
