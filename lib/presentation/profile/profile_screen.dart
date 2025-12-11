@@ -24,6 +24,7 @@ class ProfileScreen extends StatelessWidget {
             );
           }
         },
+
         builder: (context, state) {
           if (state.user == null) {
             return const Center(child: CircularProgressIndicator());
@@ -54,23 +55,14 @@ class ProfileScreen extends StatelessWidget {
                           const SizedBox(height: 40),
                           // Avatar
                           GestureDetector(
-                            onTap: () => _showAvatarPicker(context, user.avatar),
+                            onTap: () => _showAvatarPicker(context, user.avatar, user.username),
                             child: Stack(
                               children: [
                                 CircleAvatar(
                                   radius: 50,
                                   backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 47,
-                                    backgroundColor: AppTheme.surfaceGreen,
-                                    child: Text(
-                                      user.avatar.toUpperCase(),
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.primaryGreen,
-                                      ),
-                                    ),
+                                  backgroundImage: AssetImage(
+                                    'assets/images/${user.avatar}.png',
                                   ),
                                 ),
                                 Positioned(
@@ -128,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.person_outline,
                         title: 'Username',
                         value: user.username,
-                        onTap: () => _showEditUsernameDialog(context, user.username),
+                        onTap: () => _showEditUsernameDialog(context, user.username, user.avatar),
                       ),
                       const SizedBox(height: 12),
                       _buildInfoCard(
@@ -251,8 +243,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showAvatarPicker(BuildContext context, String currentAvatar) {
-    final avatars = ['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5', 'avatar6'];
+  void _showAvatarPicker(BuildContext context, String currentAvatar, String username) {
+    final avatars = ['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5'];
 
     showModalBottomSheet(
       context: context,
@@ -288,9 +280,12 @@ class ProfileScreen extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     context.read<AuthBloc>().add(
-                          UpdateProfileRequested(avatar: avatar),
+                          UpdateProfileRequested(
+                            username: username,
+                            avatar: avatar
+                          ),
                         );
-                    Navigator.pop(context);
+                      Navigator.pop(context);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -305,15 +300,10 @@ class ProfileScreen extends StatelessWidget {
                         width: 3,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        avatar.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : AppTheme.primaryGreen,
-                        ),
-                      ),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white,
+                      backgroundImage: AssetImage('assets/images/$avatar.png'),
                     ),
                   ),
                 );
@@ -325,7 +315,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showEditUsernameDialog(BuildContext context, String currentUsername) {
+  void _showEditUsernameDialog(BuildContext context, String currentUsername, String avatar) {
     final controller = TextEditingController(text: currentUsername);
 
     showDialog(
@@ -349,9 +339,12 @@ class ProfileScreen extends StatelessWidget {
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
                 context.read<AuthBloc>().add(
-                      UpdateProfileRequested(username: controller.text.trim()),
+                      UpdateProfileRequested(
+                        username: controller.text.trim(),
+                        avatar: avatar
+                      ),
                     );
-                Navigator.pop(context);
+                  Navigator.pop(context);
               }
             },
             child: const Text('Save'),
