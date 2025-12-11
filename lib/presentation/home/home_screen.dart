@@ -11,6 +11,7 @@ import 'bloc/home_bloc.dart';
 import 'bloc/home_event.dart';
 import 'bloc/home_state.dart';
 import '../product/scanner/scanner_screen.dart';
+import '../profile/profile_screen.dart';
 import 'widgets/product_card.dart';
 import '../compare/compare_screen.dart';
 import '../../config/routes.dart';
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const _HomeContent(),
           const ScannerScreen(),
           ScannedProductScreen(userId: authState.user?.uid ?? ''),
-          // const ProfileScreen(),
+          const ProfileScreen(),
         ];
 
         return Scaffold(
@@ -63,6 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.history_outlined),
                 activeIcon: Icon(Icons.history),
                 label: 'History',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                activeIcon: Icon(Icons.person),
+                label: 'Profile',
               ),
             ],
           ),
@@ -232,7 +238,7 @@ class _HomeContent extends StatelessWidget {
   Widget _buildHeroCard(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 180,
+      height: 200,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [AppTheme.primaryGreen, AppTheme.lightGreen],
@@ -240,28 +246,70 @@ class _HomeContent extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          const Text(
-            'Your smart companion',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          // Background decoration
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Icon(
+              Icons.eco,
+              size: 150,
+              color: Colors.white.withOpacity(0.1),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Explore nutrition facts, product composition, and make healthier choices with ease.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
-            ),
-            maxLines: 3,
+          // Content
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.local_dining,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Your smart companion',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Explore nutrition facts, product composition, and make healthier choices with ease.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.95),
+                  height: 1.4,
+                ),
+                maxLines: 3,
+              ),
+            ],
           ),
         ],
       ),
@@ -270,10 +318,17 @@ class _HomeContent extends StatelessWidget {
 
   Widget _buildQuickMenu(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.primaryGreen,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -282,6 +337,7 @@ class _HomeContent extends StatelessWidget {
             context,
             icon: Icons.search,
             label: 'Search',
+            color: AppTheme.primaryGreen,
             onTap: () {
               Navigator.push(
                 context,
@@ -293,11 +349,24 @@ class _HomeContent extends StatelessWidget {
             context,
             icon: Icons.compare_arrows,
             label: 'Compare',
+            color: AppTheme.lightGreen,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ComparePage()),
               );
+            },
+          ),
+          _buildQuickMenuItem(
+            context,
+            icon: Icons.favorite_outline,
+            label: 'Favorites',
+            color: Colors.red.shade400,
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+              // );
             },
           ),
         ],
@@ -309,22 +378,43 @@ class _HomeContent extends StatelessWidget {
     BuildContext context, {
     required IconData icon,
     required String label,
+    required Color color,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.white, size: 40),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1.5,
           ),
-        ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
