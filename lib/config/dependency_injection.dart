@@ -11,6 +11,7 @@ import '../data/repositories/scanned_product_repository.dart';
 import '../presentation/auth/bloc/auth_bloc.dart';
 import '../presentation/home/bloc/home_bloc.dart';
 import '../presentation/product/bloc/product_bloc.dart';
+import '../presentation/search/bloc/search_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -58,5 +59,8 @@ Future<void> setupDependencies() async {
     () => ScannedProductBloc(
       repository: getIt<ScannedProductRepository>(),
     ),
+  );
+  getIt.registerFactory<SearchBloc>(
+    () => SearchBloc(productDataSource: getIt<ProductDataSource>()),
   );
 }

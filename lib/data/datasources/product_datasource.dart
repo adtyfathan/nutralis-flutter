@@ -31,11 +31,11 @@ class ProductDataSource {
       final response = await dio.get(
         '${AppConstants.foodFactsBaseUrl}/search',
         queryParameters: {
-          'search_terms': query,
+          'categories_tags_en': query,
           'page': page,
           'page_size': 20,
           'fields':
-              'code,product_name,nutrition_grades,image_url,nutriscore_score,categories_tags',
+              'code,product_name,nutrition_grades,image_url,nutriscore_score,categories_tags_en',
         },
       );
 

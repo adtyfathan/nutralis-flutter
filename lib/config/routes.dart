@@ -6,8 +6,8 @@ import '../presentation/auth/register_screen.dart';
 import '../presentation/home/home_screen.dart';
 // import '../presentation/scanner/scanner_screen.dart';
 // import '../presentation/product/product_details_screen.dart';
-// import '../presentation/product/search_screen.dart';
-// import '../presentation/compare/compare_screen.dart';
+import '../presentation/search/search_screen.dart';
+import '../presentation/compare/compare_screen.dart';
 // import '../presentation/history/history_screen.dart';
 // import '../presentation/profile/profile_screen.dart';
 
@@ -37,10 +37,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => ProductResultScreen(barcode: barcode),
         );
-      // case search:
-      //   return MaterialPageRoute(builder: (_) => const SearchScreen());
-      // case compare:
-      //   return MaterialPageRoute(builder: (_) => const CompareScreen());
+      case search:
+        return MaterialPageRoute(builder: (_) => const SearchPage());
+      case compare:
+        return MaterialPageRoute(builder: (_) => const ComparePage());
       // case history:
       //   return MaterialPageRoute(builder: (_) => const HistoryScreen());
       // case profile:

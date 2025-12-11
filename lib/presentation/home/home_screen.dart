@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutralis_flutter/presentation/scanned_product/scanned_product_screen.dart';
+import 'package:nutralis_flutter/presentation/search/search_screen.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/dependency_injection.dart';
@@ -11,6 +12,8 @@ import 'bloc/home_event.dart';
 import 'bloc/home_state.dart';
 import '../product/scanner/scanner_screen.dart';
 import 'widgets/product_card.dart';
+import '../compare/compare_screen.dart';
+import '../../config/routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -93,12 +96,35 @@ class _HomeContent extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Welcome to Nutralis, ${authState.user?.username ?? 'User'}!',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Welcome to Nutralis, ${authState.user?.username ?? 'User'}!',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.search),
+                                      color: Colors.black87,
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          AppRoutes.search,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 16),
                               // Hero Card
@@ -257,10 +283,10 @@ class _HomeContent extends StatelessWidget {
             icon: Icons.search,
             label: 'Search',
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) => const SearchScreen()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SearchPage()),
+              );
             },
           ),
           _buildQuickMenuItem(
@@ -268,10 +294,10 @@ class _HomeContent extends StatelessWidget {
             icon: Icons.compare_arrows,
             label: 'Compare',
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) => const CompareScreen()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ComparePage()),
+              );
             },
           ),
         ],
