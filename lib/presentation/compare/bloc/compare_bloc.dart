@@ -9,7 +9,6 @@ class CompareBloc extends Bloc<CompareEvent, CompareState> {
     on<ClearProductOneEvent>(_onClearProductOne);
     on<ClearProductTwoEvent>(_onClearProductTwo);
     on<ResetCompareEvent>(_onResetCompare);
-    on<SearchProductsEvent>(_onSearchProducts);
   }
 
   void _onSelectProductOne(
@@ -17,33 +16,6 @@ class CompareBloc extends Bloc<CompareEvent, CompareState> {
     Emitter<CompareState> emit,
   ) {
     emit(state.copyWith(productOne: event.product));
-  }
-
-  Future<void> _onSearchProducts(
-    SearchProductsEvent event,
-    Emitter<SearchState> emit,
-  ) async {
-    if (event.query.trim().isEmpty) {
-      emit(const SearchInitial());
-      return;
-    }
-
-    emit(const SearchLoading());
-
-    try {
-      final products = await productDataSource.searchProducts(
-        query: event.query.trim(),
-        page: event.page,
-      );
-
-      if (products.isEmpty) {
-        emit(SearchEmpty(event.query));
-      } else {
-        emit(SearchSuccess(products: products, query: event.query));
-      }
-    } catch (e) {
-      emit(SearchError(e.toString()));
-    }
   }
 
   void _onSelectProductTwo(

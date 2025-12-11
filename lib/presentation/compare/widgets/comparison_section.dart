@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:nutralis_flutter/core/theme/app_theme.dart';
 
 class ComparisonSection extends StatelessWidget {
   final String title;
-  final String leftValue;
-  final String rightValue;
+  final dynamic leftValue;
+  final dynamic rightValue;
   final Color? leftColor;
   final Color? rightColor;
   final String winner;
@@ -18,6 +18,93 @@ class ComparisonSection extends StatelessWidget {
     this.rightColor,
     required this.winner,
   });
+
+  Widget _buildValue(dynamic value, Color? color) {
+    if (value == null) {
+      return Text(
+        'N/A',
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey.shade400,
+        ),
+        textAlign: TextAlign.center,
+      );
+    }
+
+    if (value is List) {
+      if (value.isEmpty) {
+        return Text(
+          'No data',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade400,
+          ),
+          textAlign: TextAlign.center,
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...value.take(5).map((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: color ?? Colors.black87,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item.toString().replaceAll('en:', ''),
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: color ?? Colors.black87,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          if (value.length > 5)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                '+${value.length - 5} more',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade500,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+
+    return Text(
+      value.toString(),
+      style: GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: color ?? Colors.black87,
+      ),
+      textAlign: TextAlign.center,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +123,6 @@ class ComparisonSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Title
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -60,12 +146,11 @@ class ComparisonSection extends StatelessWidget {
               ],
             ),
           ),
-          // Values
           Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Value
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -81,32 +166,20 @@ class ComparisonSection extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          leftValue,
-                          style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: leftColor ?? Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        _buildValue(leftValue, leftColor),
                         if (winner == 'left')
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Icon(
                               Icons.check_circle,
                               color: const Color(0xFF4CAF50),
-                              size: 24,
-                            ),
+                              ),
                           ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Right Value
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -123,17 +196,7 @@ class ComparisonSection extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          rightValue,
-                          style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: rightColor ?? Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        _buildValue(rightValue, rightColor),
                         if (winner == 'right')
                           Padding(
                             padding: const EdgeInsets.only(top: 8),

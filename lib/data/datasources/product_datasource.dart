@@ -33,7 +33,7 @@ class ProductDataSource {
         queryParameters: {
           'categories_tags_en': query,
           'page': page,
-          'page_size': 20,
+          'page_size': 10,
           'fields':
               'code,product_name,nutrition_grades,image_url,nutriscore_score,categories_tags_en',
         },

@@ -52,13 +52,13 @@ class ProductHeader extends StatelessWidget {
                         errorWidget: (context, url, error) => Icon(
                           Icons.image_not_supported_outlined,
                           color: Colors.grey.shade400,
-                          size: 40,
+                          size: 50,
                         ),
                       )
                     : Icon(
                         Icons.fastfood_outlined,
                         color: Colors.grey.shade400,
-                        size: 40,
+                        size: 50,
                       ),
               ),
             ),
@@ -67,8 +67,8 @@ class ProductHeader extends StatelessWidget {
                 top: -5,
                 right: -5,
                 child: Container(
-                  width: 30,
-                  height: 30,
+                  width: 35,
+                  height: 35,
                   decoration: const BoxDecoration(
                     color: Color(0xFFFFD700),
                     shape: BoxShape.circle,
@@ -76,7 +76,7 @@ class ProductHeader extends StatelessWidget {
                   child: const Icon(
                     Icons.emoji_events,
                     color: Colors.white,
-                    size: 18,
+                    size: 20,
                   ),
                 ),
               ),
